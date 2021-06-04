@@ -2,22 +2,28 @@ package com.example.kotlinwebviewex.activity
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.webkit.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.kotlinwebviewex.R
+import com.example.kotlinwebviewex.network.RetrofitApi
+import com.example.kotlinwebviewex.network.RetrofitBody
+import com.example.kotlinwebviewex.network.RetrofitService
+import java.util.*
+import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
+
+    private var mRetrofitApi: RetrofitApi? = null
+    private var retrofit:RetrofitService? = null
+    private var mRetrofitBody: RetrofitBody? = null
+    private var map = HashMap<String,Any>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val mWebView: WebView = findViewById(R.id.webView)
-        mWebView.loadUrl("http://192.168.0.102:8080/responsive/main")
-
-
         val mWebSettings = mWebView.settings
 
         mWebSettings.apply {
@@ -45,14 +51,23 @@ class MainActivity : AppCompatActivity() {
         * 이를 이용하기 위해 설정
         * */
         mWebView.webChromeClient = WebChromeClient()
+        mWebView.loadUrl("http://192.168.0.102:8080/responsive/main")
+
+        mRetrofitApi = RetrofitApi()
+        retrofit = mRetrofitApi!!.getService()
+        mRetrofitBody = RetrofitBody(this)
 
     }
-
+    fun retrofitTest(){
+        map.put("title","테스트01")
+        map.put("content","내용용용")
+        retrofit!!.postRequest("/retrofit.do",map).enqueue()
+    }
     class WebAppInterface(private val mContext:Context){
         @JavascriptInterface
         fun showToast(toast:String){
-            Log.d("111","눌림")
             Toast.makeText(mContext,toast, Toast.LENGTH_SHORT).show()
+
         }
     }
 
