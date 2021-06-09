@@ -3,6 +3,7 @@ package com.example.kotlinwebviewex.network
 import android.util.Log
 import com.example.kotlinwebviewex.activity.MainActivity
 import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -16,7 +17,7 @@ class RetrofitBody(mainActivity: MainActivity?) {
      */
     private fun resultRequestBody(mJsonObject: JSONObject): RequestBody? {
         return RequestBody.create(
-            MediaType.parse("application/json"),
+            "application/json".toMediaTypeOrNull(),
             mJsonObject.toString()
         )
     }
