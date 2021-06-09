@@ -7,7 +7,7 @@ import retrofit2.http.Field
 import retrofit2.http.POST
 import retrofit2.http.Path
 
-interface RetrofitService {
+public interface RetrofitService {
 
     @POST("/{path}")
     fun postRequest(
