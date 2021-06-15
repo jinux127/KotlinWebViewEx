@@ -1,23 +1,36 @@
 package com.example.kotlinwebviewex.activity
 
+import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.webkit.*
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.kotlinwebviewex.R
 import com.example.kotlinwebviewex.activity.base.BaseActivity
 import com.example.kotlinwebviewex.databinding.ActivityMainBinding
+import com.example.kotlinwebviewex.ext.*
 import com.example.kotlinwebviewex.model.RxBusData
-import com.example.kotlinwebviewex.utils.RxBus
-import com.example.kotlinwebviewex.utils.WebClient
-import com.example.kotlinwebviewex.utils.rxBus_type
+import com.example.kotlinwebviewex.utils.*
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_main.*
+import okhttp3.internal.notify
 
 class MainActivity : BaseActivity<ActivityMainBinding>(){
 
     override val layoutId: Int
         get() = R.layout.activity_main
+    private lateinit var startForResult: ActivityResultLauncher<Intent>
+    private lateinit var permissionForResult: ActivityResultLauncher<Array<String>>
 
     class WebViewClientClass : WebViewClient(){
         override fun shouldOverrideUrlLoading(
@@ -27,7 +40,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
             return super.shouldOverrideUrlLoading(view, request)
         }
     }
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun initView() {
+        startForResult = activityResult()
+        permissionForResult = permissionResult()
 
         main_wv.settings.apply {
             javaScriptEnabled = true // 자바스크립트 허용
@@ -57,7 +73,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
         * 이를 이용하기 위해 설정
         * */
         main_wv.webChromeClient = WebChromeClient()
-        main_wv.loadUrl("http://192.168.0.102/responsive/main")
+        main_wv.loadUrl("http://192.168.0.101:8081/calendar")
 
     }
 
@@ -67,11 +83,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
                 override fun onNext(t: Any) {
                     if (t is RxBusData) {
                         when (t.type) {
+                            RXBUS_TYPE_PERMISSION -> {
+                                checkPermission(startForResult,permissionForResult)
+                            }
+                            RXBUS_TYPE_INTRO_TO_MAIN ->{
+                                Handler(Looper.getMainLooper()).postDelayed({
+//                                    intro.visibility = View.GONE
+                                    main_wv.visibility = View.VISIBLE
+                                }, 3000)
+                            }
                             rxBus_type -> {
                                 Log.e("tag","rxbus type = test")
                             }
                             "1" ->{
                                 Log.e("tag","rxbus type = 1 data = "+t.data)
+                            }
+                            "date" ->{
+                                Log.e("tag","date = " + now())
                             }
                             else -> {
                             }
@@ -91,6 +119,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
         RxBus.getSubject().onNext(rxBusData)
         var test2  = RxBusData("MainActivity","1","string")
         RxBus.getSubject().onNext(test2)
+        var test3  = RxBusData("MainActivity","date")
+
+
+        RxBus.getSubject().onNext(test3)
+        RxBus.getSubject().onNext(RxBusData(MainActivity::class.java.simpleName, RXBUS_TYPE_PERMISSION))
+
+        createNoti(1,"연습","앱 실행중입니다")
     }
 
 }
