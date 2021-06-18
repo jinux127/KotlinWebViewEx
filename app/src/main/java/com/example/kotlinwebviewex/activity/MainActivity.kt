@@ -1,7 +1,5 @@
 package com.example.kotlinwebviewex.activity
 
-import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -13,17 +11,16 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.kotlinwebviewex.R
 import com.example.kotlinwebviewex.activity.base.BaseActivity
 import com.example.kotlinwebviewex.databinding.ActivityMainBinding
 import com.example.kotlinwebviewex.ext.*
 import com.example.kotlinwebviewex.model.RxBusData
 import com.example.kotlinwebviewex.utils.*
+import com.example.kotlinwebviewex.utils.http.SenderManager.send
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_main.*
-import okhttp3.internal.notify
 
 class MainActivity : BaseActivity<ActivityMainBinding>(){
 
@@ -62,7 +59,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
             domStorageEnabled = true
         }
 
-//        main_wv.addJavascriptInterface(WebAppInterface(this),"Android") //Javascript 설정
         main_wv.webViewClient = WebClient()
 
         /*
@@ -73,8 +69,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
         * 이를 이용하기 위해 설정
         * */
         main_wv.webChromeClient = WebChromeClient()
-        main_wv.loadUrl("http://192.168.0.101:8081/calendar")
+        main_wv.loadUrl("http://192.168.0.102:8080/responsive/main")
 
+        main_wv.addJavascriptInterface(WebAppInterface(),"Android")
+    }
+
+    fun WebAppInterface() {
+        /** Show a toast from the web page  */
+        @JavascriptInterface
+        fun showToast(toast: String) {
+            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,ScannerActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun initDataBinding() {
@@ -124,8 +131,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
 
         RxBus.getSubject().onNext(test3)
         RxBus.getSubject().onNext(RxBusData(MainActivity::class.java.simpleName, RXBUS_TYPE_PERMISSION))
-
-        createNoti(1,"연습","앱 실행중입니다")
+//        createNoti(1,"연습","앱 실행중입니다")
+        createNoti2(2,"연습2","연습중입니다.")
+        send(this,jsonData="내용내용내용내용내용내용내용내용내용내용내용내용")
     }
 
 }

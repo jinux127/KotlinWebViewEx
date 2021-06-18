@@ -3,6 +3,7 @@ package com.example.kotlinwebviewex.ext
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,6 +25,7 @@ import com.example.kotlinwebviewex.R
 import com.example.kotlinwebviewex.activity.MainActivity
 import com.example.kotlinwebviewex.model.RxBusData
 import com.example.kotlinwebviewex.utils.*
+import okhttp3.internal.notify
 
 
 fun AppCompatActivity.activityResult() =
@@ -162,12 +164,13 @@ fun AppCompatActivity.checkPermissions(
     }
     return isGranted
 }
-
+/*Notification 생성
+* */
 fun AppCompatActivity.createNoti(
     notifiactionId: Int,
     title: String = "제목",
     content: String = "내용",
-    CHANNEL_ID: String = "CH",
+    CHANNEL_ID: String = "채널 id",
     onGoing:Boolean = true
 ) {
     val intent = Intent(this,MainActivity::class.java).apply {
@@ -189,7 +192,46 @@ fun AppCompatActivity.createNoti(
     }
 }
 
+fun AppCompatActivity.createNoti2(
+    notifiactionId: Int,
+    title: String = "제목",
+    content: String = "내용",
+    CHANNEL_ID: String = "채널 id",
+    onGoing:Boolean = true
+) {
+    val intent = Intent(this,MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+    val pendingIntent: PendingIntent = PendingIntent.getActivity(this,0,intent,0)
+    var builder: NotificationCompat.Builder = if(Build.VERSION.SDK_INT>=26){
+        val name = getString(R.string.channel_name)
+        val descriptionText = getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            name,
+            importance
+        )
+        (getSystemService(Service.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        NotificationCompat.Builder(this,CHANNEL_ID)
+    } else {
+            NotificationCompat.Builder(this)
+    }.apply {
+        setSmallIcon(R.drawable.ic_launcher_foreground)
+        setContentTitle(title)
+        setContentText(content)
+        setPriority(NotificationCompat.PRIORITY_HIGH)
+        setOngoing(onGoing)
+        setContentIntent(pendingIntent)
+    }
+    NotificationManagerCompat.from(this).notify(notifiactionId,builder.build())
+    with(NotificationManagerCompat.from(this)){
+        notify(notifiactionId,builder.build())
+    }
+}
 
+/*Notifiaction 채널nbvc 생성
+* */
 fun AppCompatActivity.createNotificationChannel(
     CHANNEL_ID:String
 ){

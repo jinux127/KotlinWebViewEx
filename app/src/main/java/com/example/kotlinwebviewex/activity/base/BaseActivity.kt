@@ -50,4 +50,5 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         }
         super.onDestroy()
     }
+
 }
