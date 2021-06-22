@@ -12,6 +12,10 @@ class ScannerActivity  : BaseActivity<ActivityScannerBinding>() {
     override val layoutId: Int
         get() = R.layout.activity_scanner
 
+    companion object {
+        const val RESULT_DATA = "result_data"
+    }
+
     override fun initView() {
         initQRcodeScanner()
     }
@@ -32,16 +36,5 @@ class ScannerActivity  : BaseActivity<ActivityScannerBinding>() {
         integrator.initiateScan()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-        if (result != null) {
-            if (result.contents == null) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
-    }
+
 }

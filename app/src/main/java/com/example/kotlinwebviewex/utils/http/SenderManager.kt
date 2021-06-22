@@ -3,6 +3,7 @@ package com.example.kotlinwebviewex.utils.http
 import android.content.Context
 import android.util.Log
 import com.example.kotlinwebviewex.model.base.BaseRequest
+import com.example.kotlinwebviewex.model.base.BaseResponse
 import com.example.kotlinwebviewex.utils.RxBus
 import com.example.kotlinwebviewex.utils.http.RetrofitHelper.getDefaultOkHttpClient
 import com.google.gson.Gson
@@ -41,8 +42,17 @@ object SenderManager {
             test0001(BaseRequest(test = jsonData,data = jsonData))
                 .subscribeOn(Schedulers.io()) // 어디서 처리할 건지?
                 .observeOn(AndroidSchedulers.mainThread()) // 받는 곳 쓰레드
-                .subscribe(Rx) // 콜백
+//                .subscribe(Rx)
+                .subscribe({ t ->
+                    if (t is BaseResponse){
+                        Log.e("tag", "웹에서 안드로이드로 받은 데이터 입니다. \nid: ${t.id} \ndata: ${t.data}")
+                        RxBus.getSubject().onNext(t)
+                    }
+                }, { err ->
+                        Log.e("tag",err.toString())
+                }, {
 
+                }) // 콜백
         }
     }
 

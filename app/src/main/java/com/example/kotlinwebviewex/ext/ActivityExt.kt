@@ -1,38 +1,47 @@
 package com.example.kotlinwebviewex.ext
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
-import android.view.inspector.IntFlagMapping
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.kotlinwebviewex.R
 import com.example.kotlinwebviewex.activity.MainActivity
+import com.example.kotlinwebviewex.activity.ScannerActivity
 import com.example.kotlinwebviewex.model.RxBusData
 import com.example.kotlinwebviewex.utils.*
-import okhttp3.internal.notify
+import com.google.zxing.integration.android.IntentIntegrator
 
+
+fun AppCompatActivity.activityResultLauncher() =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        if (it.resultCode == Activity.RESULT_OK){
+            it.data?.let { intent ->
+                if (intent.hasExtra(ScannerActivity.RESULT_DATA)) {
+                    Toast.makeText(
+                        this,
+                        intent.getStringExtra(ScannerActivity.RESULT_DATA),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
 
 fun AppCompatActivity.activityResult() =
     registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
         when (result.resultCode) {
             AppCompatActivity.RESULT_OK -> {
-
             }
             AppCompatActivity.RESULT_CANCELED -> {
                 RxBus.getSubject().onNext(
@@ -113,6 +122,7 @@ fun AppCompatActivity.toastShow(
     }?.let { Toast.makeText(applicationContext, it, duration).show() }
     unit?.invoke()
 }
+
 
 fun AppCompatActivity.checkPermission(
     activity: ActivityResultLauncher<Intent>,
@@ -230,7 +240,7 @@ fun AppCompatActivity.createNoti2(
     }
 }
 
-/*Notifiaction 채널nbvc 생성
+/*Notifiaction 채널 생성
 * */
 fun AppCompatActivity.createNotificationChannel(
     CHANNEL_ID:String

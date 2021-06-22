@@ -1,6 +1,11 @@
 package com.example.kotlinwebviewex.activity.base
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.webkit.JavascriptInterface
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -43,6 +48,7 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         initDataBinding()
         initAfter()
     }
+
 
     override fun onDestroy() {
         compositeDisposable?.let {

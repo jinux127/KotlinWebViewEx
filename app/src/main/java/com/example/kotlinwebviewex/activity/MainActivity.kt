@@ -11,14 +11,15 @@ import android.webkit.*
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat.startActivityForResult
 import com.example.kotlinwebviewex.R
 import com.example.kotlinwebviewex.activity.base.BaseActivity
 import com.example.kotlinwebviewex.databinding.ActivityMainBinding
 import com.example.kotlinwebviewex.ext.*
 import com.example.kotlinwebviewex.model.RxBusData
+import com.example.kotlinwebviewex.model.base.BaseResponse
 import com.example.kotlinwebviewex.utils.*
 import com.example.kotlinwebviewex.utils.http.SenderManager.send
+import com.google.zxing.integration.android.IntentIntegrator
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -71,16 +72,40 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
         main_wv.webChromeClient = WebChromeClient()
         main_wv.loadUrl("http://192.168.0.102:8080/responsive/main")
 
-        main_wv.addJavascriptInterface(WebAppInterface(),"Android")
+        main_wv.addJavascriptInterface(WebAppInterface(this),"Android")
     }
-
-    fun WebAppInterface() {
+    inner class WebAppInterface(private val mContext: Context) {
         /** Show a toast from the web page  */
         @JavascriptInterface
         fun showToast(toast: String) {
-            Toast.makeText(this, toast, Toast.LENGTH_SHORT).show()
-            val intent = Intent(this,ScannerActivity::class.java)
-            startActivity(intent)
+            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+//            val intent = Intent(this,ScannerActivity::class.java)
+//            startActivity(intent)
+        }
+        @JavascriptInterface
+        fun callScanner(toast: String) {
+            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+//            mContext.startActivity(Intent(mContext,ScannerActivity::class.java))
+            qrScan()
+        }
+    }
+    fun qrScan(){
+        val integrator  = IntentIntegrator(this)
+        integrator.setBeepEnabled(false)
+        integrator.setOrientationLocked(true)
+        integrator.setPrompt("QR코드를 인증해주세요.")
+        integrator.initiateScan()
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+        if (result != null) {
+            if (result.contents == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Scanned: " + result.contents, Toast.LENGTH_LONG).show()
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
@@ -111,6 +136,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
                             else -> {
                             }
                         }
+
+                    }
+                    if (t is BaseResponse){
+                        Log.e("tag","-웹에서 받은 데이터 MainActivity에서 출력-")
+                        Log.e("tag","t.id: ${t.id}")
+                        Log.e("tag","t.data: ${t.data}")
                     }
                 }
 
@@ -118,6 +149,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
 
                 override fun onComplete() {}
             })
+
         )
     }
 
@@ -127,13 +159,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(){
         var test2  = RxBusData("MainActivity","1","string")
         RxBus.getSubject().onNext(test2)
         var test3  = RxBusData("MainActivity","date")
-
-
         RxBus.getSubject().onNext(test3)
         RxBus.getSubject().onNext(RxBusData(MainActivity::class.java.simpleName, RXBUS_TYPE_PERMISSION))
 //        createNoti(1,"연습","앱 실행중입니다")
         createNoti2(2,"연습2","연습중입니다.")
-        send(this,jsonData="내용내용내용내용내용내용내용내용내용내용내용내용")
+        send(this,jsonData="안드로이드에서 웹으로 전송할 데이터입니다.")
     }
 
 }
