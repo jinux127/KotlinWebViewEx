@@ -35,7 +35,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,Cus
         get() = R.layout.activity_main
     private lateinit var startForResult: ActivityResultLauncher<Intent>
     private lateinit var permissionForResult: ActivityResultLauncher<Array<String>>
-    val TAG = "MainActivity"
+    val TAG = "tag"
     val sysLanguage = Locale.getDefault().language
     val sysCountry = Locale.getDefault().country
     class WebViewClientClass : WebViewClient(){
@@ -90,14 +90,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,Cus
                 callback: GeolocationPermissions.Callback?
             ) {
                 super.onGeolocationPermissionsShowPrompt(origin, callback)
+                Log.e(TAG,"origin: $origin")
                 callback?.invoke(origin,true,true)
             }
         }
-//        main_wv.loadUrl("http://192.168.0.102:8080/responsive/main")
 
         main_wv.addJavascriptInterface(WebAppInterface(this),"Android")
-//        main_wv.loadUrl("http://192.168.0.102:8080/responsive/main")
-        main_wv.loadUrl("http://map.naver.com")
+        main_wv.loadUrl("http://192.168.0.102:8080/responsive/main")
+//        main_wv.loadUrl("http://map.naver.com")
 
 
     }

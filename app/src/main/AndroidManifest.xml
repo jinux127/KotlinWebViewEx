@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>-->
         <activity android:name=".activity.MainActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             tools:replace="screenOrientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
