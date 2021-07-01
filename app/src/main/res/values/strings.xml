@@ -19,4 +19,10 @@
     <string name="permission_msg_deny_title">구동 필수 권한 허용 필요</string>
     <string name="permission_msg_deny_msg">위 사용 권한이 없습니다. 설정화면에서 권한을 설정하시겠습니까?</string>
     <string name="permission_msg_deny_toast">구동에 필수로 필요한 권한이 허용되지 않아 앱을 사용할 수 없습니다. 앱을 종료 합니다.</string>
+
+
+    <string name="dialog_title_text">커스텀 다이얼로그 연습중!</string>
+    <string name="dialog_content_text">커스텀 다이얼로그 본문 내용!</string>
+    <string name="dialog_input_type">입력값</string>
+    <string name="dialog_input_text">값을 입력해주세요.</string>
 </resources>

@@ -3,7 +3,12 @@ package com.example.kotlinwebviewex.activity.base
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.webkit.JavascriptInterface
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,12 +16,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import io.reactivex.disposables.CompositeDisposable
 
-abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
+abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity(){
 
     lateinit var viewDataBinding: T // 실제 Activity에서 init
     val compositeDisposable = CompositeDisposable()
     abstract val layoutId: Int
-
     /**
      * 레이아웃을 띄운 직후 호출.
      * 뷰나 액티비티의 속성 등을 초기화.
@@ -56,5 +60,6 @@ abstract class BaseActivity<T : ViewDataBinding> : AppCompatActivity() {
         }
         super.onDestroy()
     }
+
 
 }

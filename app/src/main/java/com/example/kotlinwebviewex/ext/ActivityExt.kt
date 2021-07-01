@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -21,6 +22,9 @@ import com.example.kotlinwebviewex.activity.ScannerActivity
 import com.example.kotlinwebviewex.model.RxBusData
 import com.example.kotlinwebviewex.utils.*
 import com.google.zxing.integration.android.IntentIntegrator
+import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun AppCompatActivity.activityResultLauncher() =

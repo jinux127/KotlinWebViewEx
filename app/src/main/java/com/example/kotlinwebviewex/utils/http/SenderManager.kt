@@ -45,11 +45,11 @@ object SenderManager {
 //                .subscribe(Rx)
                 .subscribe({ t ->
                     if (t is BaseResponse){
-                        Log.e("tag", "웹에서 안드로이드로 받은 데이터 입니다. \nid: ${t.id} \ndata: ${t.data}")
+                        Log.e("send() 성공", "웹에서 안드로이드로 받은 데이터 입니다. \nid: ${t.id} \ndata: ${t.data}")
                         RxBus.getSubject().onNext(t)
                     }
                 }, { err ->
-                        Log.e("tag",err.toString())
+                        Log.e("send() 에러",err.toString())
                 }, {
 
                 }) // 콜백

@@ -30,22 +30,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinWebViewEx"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.ScannerActivity"
+        <!--<activity android:name=".activity.ScannerActivity"
             android:screenOrientation="fullSensor"
             tools:replace="screenOrientation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data
                     android:host="qr"
                     android:scheme="scanner"/>
             </intent-filter>
-
-        </activity>
-        <activity android:name=".activity.MainActivity">
+        </activity>-->
+        <activity android:name=".activity.MainActivity"
+            android:screenOrientation="fullSensor"
+            tools:replace="screenOrientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
