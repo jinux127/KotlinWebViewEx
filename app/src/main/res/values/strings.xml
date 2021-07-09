@@ -25,4 +25,8 @@
     <string name="dialog_content_text">커스텀 다이얼로그 본문 내용!</string>
     <string name="dialog_input_type">입력값</string>
     <string name="dialog_input_text">값을 입력해주세요.</string>
+
+    <string name="band_button">QR 등록하기</string>
+    <string name="band_name">이름</string>
+    <string name="band_scan_text">QR코드를 사각형 안에 비춰주세요.</string>
 </resources>

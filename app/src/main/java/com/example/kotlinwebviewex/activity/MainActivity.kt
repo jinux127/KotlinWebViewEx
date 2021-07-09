@@ -27,7 +27,12 @@ import com.example.kotlinwebviewex.utils.http.SenderManager.send
 import com.google.zxing.integration.android.IntentIntegrator
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_main.*
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.properties.Delegates
 
 class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,CustomDialogInterface{
@@ -111,9 +116,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,Cus
         }
         @JavascriptInterface
         fun callScanner(toast: String) {
-            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
-//            mContext.startActivity(Intent(mContext,ScannerActivity::class.java))
-            qrScan()
+//            Toast.makeText(mContext, toast, Toast.LENGTH_SHORT).show()
+            RxBus.getSubject().onNext(
+                RxBusData(
+                    MainActivity::class.java.simpleName,
+                    RXBUS_TYPE_MAIN_TO_BAND
+                )
+            )
+//            기존 큐알 스캔 생성
+//            qrScan()
         }
         @JavascriptInterface
         fun getAndroidLocale(toast: String) {
@@ -164,6 +175,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,Cus
                             rxBus_type -> {
                                 Log.e("tag","rxbus type = test")
                             }
+                            RXBUS_TYPE_MAIN_TO_BAND->{
+                                startActivity(Intent(this@MainActivity,ScannerActivity::class.java))
+                            }
                             "1" ->{
                                 Log.e("tag","rxbus type = 1 data = "+t.data)
                             }
@@ -213,12 +227,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(),SensorEventListener,Cus
     * 3. sensor TYPE_LINEAR_ACCELERATION 생성
     * 4. 리스너 등록
     * 5. onSensorChanged event.value[i]로 출력*/
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            if (event.values[0].toInt() != 0||event.values[0].toInt() != 0||event.values[0].toInt() != 0) {
-                Log.e("sensor","[x]: ${event.values[0].toInt()}")
-                Log.e("sensor","[y]: ${event.values[1].toInt()}")
-                Log.e("sensor","[z]: ${event.values[2].toInt()}")
+            if (event.values[0].toInt().absoluteValue > 3||event.values[1].toInt().absoluteValue > 3||event.values[2].toInt().absoluteValue >3) {
+                val dateTime: String? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                } else ({
+                    LocalDateTime.now()
+                }).toString()
+                Log.i("sensor","[time]: $dateTime     [x]: ${event.values[0].toInt()} [y]: ${event.values[1].toInt()} [z]: ${event.values[2].toInt()}")
             }
         }
     }
